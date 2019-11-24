@@ -13,6 +13,9 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+$router->group(['middleware' => 'cors'], function () use ($router) {
+    $router->group(['prefix' => 'players'], function () use ($router) {
+        $router->get('/', 'PlayerController@playerLists');
+        $router->get('/{id}', 'PlayerController@getPlayer')->where('id', '[0-9]+');
+    });
 });
