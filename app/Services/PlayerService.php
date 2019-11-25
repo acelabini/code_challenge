@@ -8,8 +8,6 @@ use App\Services\Client\PremierLeague\PremierLeagueClientService;
 
 class PlayerService
 {
-    const PAGINATE_PLAYERS = 20;
-
     protected $clientService;
 
     protected $playerRepository;
@@ -35,18 +33,18 @@ class PlayerService
                 return false;
             }
 
+            // Instruction says: Fetch and store a minimum of 100 players from this data provider
+            if (count($playerList) < 100) {
+                return false;
+            }
+
             // Assign player id as index
             $players = [];
             foreach ($playerList as $player) {
                 $players[$player['id']] = $player;
             }
 
-            $playerIds = array_keys($players);
-            // Get existing players
-            $existingPlayers = $this->playerRepository->getPlayersByIds($playerIds)->toArray();
-            // differentiate the existing players to the new fetched players
-            $newPlayerIds = array_diff($playerIds, $existingPlayers);
-            $this->processCollectedPlayers($players, $newPlayerIds);
+            $this->processCollectedPlayers($players);
 
             return true;
         } catch (\Exception $e) {
@@ -58,28 +56,48 @@ class PlayerService
      * Process the new set of fetched players
      *
      * @param array $players
-     * @param array $newPlayerIds
      */
-    private function processCollectedPlayers(array $players, array $newPlayerIds)
+    private function processCollectedPlayers(array $players)
     {
-        foreach ($newPlayerIds as $id) {
-            if (!isset($players[$id])) continue;
-            $playerInfo = $players[$id];
+        // Get existing players
+        $playerIds = array_keys($players);
+        $existingPlayers = $this->playerRepository->getPlayersByIds($playerIds);
 
+        // Two for loop is better than 2 queries
+        // Update the existing players
+        foreach ($existingPlayers as $player) {
+            // Don't process unknown player id
+            if (!isset($players[$player->player_id])) {
+                continue;
+            }
+            $playerInfo = $players[$player->player_id];
+            $this->playerRepository->update(
+                $player,
+                [
+                    'player_information' => $playerInfo
+                ]
+            );
+            unset($players[$player->player_id]);
+        }
+
+        // Create new players
+        foreach ($players as $id => $player) {
             $this->playerRepository->create([
                 'player_id'             =>  $id,
-                'player_information'    =>  $playerInfo
+                'player_information'    =>  $player
             ]);
         }
     }
 
-    public function getPlayers()
+    public function getPlayers($limit = 10)
     {
-        return $this->playerRepository->getPlayers(self::PAGINATE_PLAYERS);
+        return $this->playerRepository->getPlayers($limit);
     }
 
     public function getPlayer(int $playerId) : Player
     {
-        return $this->playerRepository->get($playerId);
+        return $this->playerRepository->find([
+            ['player_id', $playerId]
+        ]);
     }
 }

@@ -17,6 +17,22 @@ class PlayerController extends ApiController
     }
 
     /**
+     * @OA\Post(
+     *     path="/api/players",
+     *     summary="Get all players",
+     *     description="Get all players available",
+     *     tags={"PLAYERS"},
+     *     @OA\Parameter(
+     *         name="limit",
+     *         in="query",
+     *         description="The number of items to return",
+     *         schema={
+     *            "type"="int",
+     *            "example"="10"
+     *         }
+     *     ),
+     * )
+     *
      * Get all available players
      *
      * @param Request $request
@@ -25,13 +41,32 @@ class PlayerController extends ApiController
     public function playerLists(Request $request)
     {
         return $this->runWithExceptionHandling(function () use ($request) {
-            $players = $this->playerService->getPlayers();
+            $this->validate($request, [
+                'limit' =>  'numeric'
+            ]);
+            $players = $this->playerService->getPlayers($request->get('limit'));
 
             $this->response->setData(['data' => new PlayerList($players)]);
         });
     }
 
     /**
+     * @OA\Post(
+     *     path="/api/players/{player_id}",
+     *     summary="Get player by id",
+     *     description="Get player by id",
+     *     tags={"PLAYERS"},
+     *     @OA\Parameter(
+     *         name="Player id",
+     *         in="path",
+     *         description="Player id",
+     *         required=true,
+     *         schema={
+     *            "type"="int"
+     *         }
+     *     ),
+     * )
+     *
      * Get player by id
      *
      * @param Request $request

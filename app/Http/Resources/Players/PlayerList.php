@@ -39,7 +39,7 @@ class PlayerList extends Resource
     {
         return [
             'id'    =>  $player->player_id,
-            'full_name' =>  $player->player_information['first_name']." ".$player->player_information['second_name']
+            'full_name' =>  ($player->player_information['first_name']." ".$player->player_information['second_name'])
         ];
     }
 }

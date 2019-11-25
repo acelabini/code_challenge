@@ -27,20 +27,21 @@ class ApiController extends Controller
     {
         try {
             $callback();
-            return response()->json($this->response->getData());
+
+            return response()->json($this->response->getData(), Response::HTTP_OK, [], JSON_UNESCAPED_UNICODE);
         } catch (ApiException $e) {
             throw $e;
-        } catch(ValidationException $e) {
+        } catch (ValidationException $e) {
             throw new ApiException(
                 $e->getMessage(),
                 $e->getResponse() ? $e->getResponse()->getStatusCode() : Response::HTTP_UNPROCESSABLE_ENTITY,
                 $e->errors()
             );
-        } catch(ModelNotFoundException $e) {
+        } catch (ModelNotFoundException $e) {
             throw new ApiException('Record not found.', Response::HTTP_NOT_FOUND);
-        } catch(GuzzleException $e) {
+        } catch (GuzzleException $e) {
             throw new ApiException($e->getMessage(), $e->getCode());
-        } catch(InvalidArgumentException $e) {
+        } catch (InvalidArgumentException $e) {
             throw new ApiException($e->getMessage(), Response::HTTP_UNPROCESSABLE_ENTITY);
         } catch (Exception $e) {
             throw new ApiException($e->getMessage(), $e->getCode() ?: Response::HTTP_INTERNAL_SERVER_ERROR);

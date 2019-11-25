@@ -16,7 +16,7 @@ class PlayersRepository extends Repository
     {
         return $this->model
             ->whereIn('player_id', $playerIds)
-            ->pluck('player_id')
+            ->get()
             ;
     }
 
@@ -25,7 +25,6 @@ class PlayersRepository extends Repository
         return $this->model
             ->select(DB::raw("*, JSON_EXTRACT(player_information, '$.total_points') as total_points"))
             ->whereNull('deleted_at')
-            ->orderBy('total_points', 'desc')
             ->paginate($limit);
     }
 }
