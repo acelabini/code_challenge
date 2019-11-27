@@ -32,7 +32,7 @@ class ClientSOAP extends ClientRequest
             throw new \InvalidArgumentException();
         }
         try {
-            $soapClient = new \SoapClient($this->url);
+            $soapClient = new \SoapClient($this->url."?wsdl");
             $soapClient->__setLocation($this->url);
             $request = $soapClient->__soapCall($this->method, $this->body);
             $this->setResponse($request);

@@ -49,7 +49,6 @@ class PremierLeagueClientService
 
             return $request->getResponse();
         } catch (\Exception $e) {
-            dd($e->getMessage());
             Log::error($e->getMessage());
             Log::error($e->getTraceAsString());
             throw new \RuntimeException("Something went wrong.");
@@ -72,13 +71,14 @@ class PremierLeagueClientService
     /**
      * Fetch players from api
      *
-     * @return array|null
+     * @param string $method
+     * @return null
      */
-    public function fetchPlayers()
+    public function fetchPlayers($method = "get")
     {
         $request = $this->sendRequest(
             "bootstrap-static/",
-            "get"
+            $method
         );
 
         return $request[array_get($this->config, "player.index")] ?? null;

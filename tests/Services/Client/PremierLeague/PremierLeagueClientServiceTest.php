@@ -18,29 +18,28 @@ class PremierLeagueClientServiceTest extends TestCase
         parent::setUp();
     }
 
-//    public function testFetchPlayersJson()
-//    {
-//        $clientService = app(PremierLeagueClientService::class);
-//        $players = $clientService->fetchPlayers();
-//
-//        $this->assertIsArray($players);
-//    }
-//
-//    public function testFetchPlayersXMLThrowError()
-//    {
-//        $clientService = app(PremierLeagueClientService::class)->setConfig(['format' => 'xml']);
-//        $this->expectException(RuntimeException::class);
-//        $this->expectExceptionMessage("Something went wrong.");
-//        $clientService->fetchPlayers();
-//    }
-
-    public function testFetchPlayersXMLSuccess()
+    public function testFetchPlayersJson()
     {
-        $clientService = app(PremierLeagueClientService::class)->setConfig([
-            'format' => 'xml',
-            'url'   => env("APP_URL")."api"
-        ]);
+        $clientService = app(PremierLeagueClientService::class);
         $players = $clientService->fetchPlayers();
-        dd($players);
+
+        $this->assertIsArray($players);
     }
+
+    public function testFetchPlayersXMLThrowError()
+    {
+        $clientService = app(PremierLeagueClientService::class)->setConfig(['format' => 'xml']);
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage("Something went wrong.");
+        $clientService->fetchPlayers();
+    }
+
+//    public function testFetchPlayersXMLSuccess()
+//    {
+//        $clientService = app(PremierLeagueClientService::class)->setConfig([
+//            'format' => 'xml',
+//            'url'   => env("APP_URL")."api"
+//        ]);
+//        $players = $clientService->fetchPlayers();
+//    }
 }

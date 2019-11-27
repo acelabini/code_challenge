@@ -46,7 +46,7 @@ abstract class ClientRequest extends ClientResponseBody
         Client $client = null
     ) {
         $this->client = $client;
-        $this->method = strtoupper($requestType);
+        $this->method = $requestType;
         $this->url = $requestUrl;
         $this->headers = $requestHeader;
         $this->body = $requestBody;
