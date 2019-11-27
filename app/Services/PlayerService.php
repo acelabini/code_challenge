@@ -4,37 +4,33 @@ namespace App\Services;
 
 use App\Models\Player;
 use App\Repositories\PlayersRepository;
-use App\Services\Client\PremierLeague\PremierLeagueClientService;
 
 class PlayerService
 {
-    protected $clientService;
-
     protected $playerRepository;
 
-    public function __construct(PremierLeagueClientService $clientService, PlayersRepository $playerRepository)
+    public function __construct(PlayersRepository $playerRepository)
     {
-        $this->clientService = $clientService;
         $this->playerRepository = $playerRepository;
     }
 
     /**
      * Sync players from api
      *
-     * @return bool
+     * @param array $playerList
+     * @param int $minimumList
+     * @return array|bool
      * @throws \Exception
      */
-    public function syncPlayers()
+    public function syncPlayers(array $playerList, $minimumList = 100)
     {
         try {
-            // initiate the api call
-            $playerList = $this->clientService->fetchPlayers();
             if (empty($playerList)) {
                 return false;
             }
 
             // Instruction says: Fetch and store a minimum of 100 players from this data provider
-            if (count($playerList) < 100) {
+            if (count($playerList) < $minimumList) {
                 return false;
             }
 
@@ -46,7 +42,7 @@ class PlayerService
 
             $this->processCollectedPlayers($players);
 
-            return true;
+            return $players;
         } catch (\Exception $e) {
             throw $e;
         }
@@ -89,11 +85,19 @@ class PlayerService
         }
     }
 
+    /**
+     * @param int $limit
+     * @return mixed
+     */
     public function getPlayers($limit = 10)
     {
         return $this->playerRepository->getPlayers($limit);
     }
 
+    /**
+     * @param int $playerId
+     * @return Player
+     */
     public function getPlayer(int $playerId) : Player
     {
         return $this->playerRepository->find([

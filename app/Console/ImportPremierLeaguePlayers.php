@@ -2,11 +2,12 @@
 
 namespace App\Console;
 
+use App\Services\Client\PremierLeague\PremierLeagueClientService;
 use App\Services\PlayerService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
-class ImportPlayers extends Command
+class ImportPremierLeaguePlayers extends Command
 {
     /**
      * The name and signature of the console command.
@@ -23,6 +24,11 @@ class ImportPlayers extends Command
     protected $description = 'Import players every minute';
 
     /**
+     * @var PremierLeagueClientService
+     */
+    protected $clientService;
+
+    /**
      * @var PlayerService
      */
     protected $playerService;
@@ -31,11 +37,13 @@ class ImportPlayers extends Command
      * Create a new command instance.
      *
      * ImportPlayers constructor.
+     * @param PremierLeagueClientService $clientService
      * @param PlayerService $playerService
      */
-    public function __construct(PlayerService $playerService)
+    public function __construct(PremierLeagueClientService $clientService, PlayerService $playerService)
     {
         parent::__construct();
+        $this->clientService = $clientService;
         $this->playerService = $playerService;
     }
 
@@ -47,7 +55,9 @@ class ImportPlayers extends Command
     public function handle()
     {
         try {
-            $this->playerService->syncPlayers();
+            // initiate the api call
+            $playerList = $this->clientService->fetchPlayers();
+            $this->playerService->syncPlayers($playerList, config('clients.premier_league.player.fetch_min_data'));
         } catch (\Exception $e) {
             Log::error($e->getMessage());
             Log::error($e->getTraceAsString());

@@ -10,8 +10,8 @@ use Illuminate\Support\ServiceProvider;
 class ClientServiceProvider extends ServiceProvider
 {
     protected $listen = [
-        'json'  =>  ClientJSON::class,
-        'soap'  =>  ClientSOAP::class
+        'json' =>  ClientJSON::class,
+        'xml'  =>  ClientSOAP::class
     ];
 
     function register()

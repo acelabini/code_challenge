@@ -15,7 +15,7 @@ class CreatePlayersTable extends Migration
     {
         Schema::create('players', function (Blueprint $table) {
             $table->increments('id');
-            $table->bigInteger('player_id');
+            $table->bigInteger('player_id')->index();
             $table->json("player_information");
             $table->timestamps();
             $table->softDeletes();

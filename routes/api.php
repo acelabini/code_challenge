@@ -14,8 +14,11 @@ use Illuminate\Http\Request;
 */
 
 $router->group(['middleware' => 'cors'], function () use ($router) {
-    $router->group(['prefix' => 'players'], function () use ($router) {
-        $router->get('/', 'PlayerController@playerLists');
-        $router->get('/{id}', 'PlayerController@getPlayer')->where('id', '[0-9]+');
+    $router->get('/players', 'PlayerController@playerLists');
+    $router->get('/player/{id}', 'PlayerController@getPlayer')->where('id', '[0-9]+');
+    $router->get('/bootstrap-static', function () {
+        return response(file_get_contents(public_path('players.wsdl')), 200, [
+            'Content-Type' => 'application/xml'
+        ]);
     });
 });

@@ -18,7 +18,6 @@ class ClientSOAP extends ClientRequest
         if (! extension_loaded('soap')) {
             throw new SOAPNotEnabledException();
         }
-        $this->body = json_decode($this->body);
 
         return $this;
     }
