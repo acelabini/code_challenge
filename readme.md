@@ -13,6 +13,15 @@ Code challenge
 - Run the scheduler to sync players
     - `* * * * * cd /path-to-your-project && php artisan schedule:run >> /dev/null 2>&1`
     - the cron job runs every minute
+- To change the configuration open `.env` , edit the following variables
+```env
+PREMIER_LEAGUE_URL=https://fantasy.premierleague.com/api/
+PREMIER_LEAGUE_FORMAT=json
+PREMIER_LEAGUE_MIN_DATA=100
+PREMIER_LEAGUE_INDEX=elements
+```
+
+
 ### Endpoints
 
 - Get all players
